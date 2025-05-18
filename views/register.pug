@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1 Créer un compte
+  form(action="/register" method="POST")
+    div
+      label(for="username") Nom d'utilisateur :
+      input(type="text" name="username" required)
+    div
+      label(for="password") Mot de passe :
+      input(type="password" name="password" required)
+    div
+      label(for="confirm_password") Confirmer le mot de passe :
+      input(type="password" name="confirm_password" required)
+    div
+      button(type="submit") S'inscrire

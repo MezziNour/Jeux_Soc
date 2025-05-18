@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1 Connexion
+
+  form(action="/login" method="POST")
+    div
+      label(for="username") Nom d'utilisateur :
+      input(type="text" name="username" id="username" required)
+    div
+      label(for="password") Mot de passe :
+      input(type="password" name="password" id="password" required)
+    div
+      button(type="submit") Se connecter
+
+  p
+    | Pas encore de compte ?
+    a(href="/register") Inscrivez-vous ici

@@ -1,0 +1,70 @@
+extends layout
+
+block content
+  h1 Profil de #{user.NomUtilisateur}
+
+  img(src='/images/default.jpg', alt='Photo de profil', width='150')
+
+  p Nom d'utilisateur : #{user.NomUtilisateur}
+  p Nombre de jeux possédés : #{nbJeux}
+
+  form(action='/profile/edit-name', method='POST')
+    button(type='submit') Changer mon nom d'utilisateur
+
+  form(action='/profile/edit-password', method='POST')
+    button(type='submit') Changer mon mot de passe
+
+  form(action='/profile/delete', method='POST', onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')")
+    button(type='submit') Supprimer mon compte
+
+  h2 Wishlist
+  if wishlist.length
+    ul
+      each item in wishlist
+        li Jeu ID: #{item.IDJeu}
+  else
+    p Aucune wishlist
+
+  h2 Jeux Possédés
+  if jeux.length
+    ul
+      each jeu in jeux
+        li Jeu ID: #{jeu.IDJeu}
+  else
+    p Aucun jeu possédé
+
+  h2 Playlists
+  form(action='/profile/add-playlist', method='GET')
+    button(type='submit') Ajouter une playlist
+  if playlists.length
+    ul
+      each p in playlists
+        li Jeu ID: #{p.IDJeu}
+  else
+    p Aucune playlist enregistrée
+
+  if user.IsAdmin
+    h2 Gérer les accès des utilisateurs
+    if utilisateurs.length
+      table
+        thead
+          tr
+            th Nom d'utilisateur
+            th Admin
+            th Actions
+        tbody
+          each u in utilisateurs
+            tr
+              td #{u.NomUtilisateur}
+              td #{u.IsAdmin ? 'Oui' : 'Non'}
+              td
+                if !u.IsAdmin
+                  form(action='/profile/make-admin', method='POST', style='display:inline')
+                    input(type='hidden', name='IDUtilisateur', value=u.IDUtilisateur)
+                    button(type='submit') Rendre admin
+                else
+                  form(action='/profile/remove-admin', method='POST', style='display:inline')
+                    input(type='hidden', name='IDUtilisateur', value=u.IDUtilisateur)
+                    button(type='submit') Retirer admin
+    else
+      p Aucun utilisateur trouvé

@@ -33,4 +33,7 @@ router.post('/', async function(req, res, next) {
   }
 });
 
+req.session.userId = user[0].IDUtilisateur;
+
+
 module.exports = router;

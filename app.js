@@ -36,6 +36,15 @@ app.use('/login', loginRouter);
 app.use('/register', registerRouter); 
 app.use('/profile', profileRouter);
 
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Erreur lors de la déconnexion :', err);
+      return res.status(500).send('Erreur lors de la déconnexion');
+    }
+    res.redirect('/login');
+  });
+});
 
 
 // catch 404 and forward to error handler

@@ -32,6 +32,9 @@ router.use(isAuthenticated);
 
 // Page profil
 router.get('/', async (req, res) => {
+  
+  console.log("👤 Accès /profile avec session :", req.session);
+  
   const userId = req.session.userId;
 
   try {

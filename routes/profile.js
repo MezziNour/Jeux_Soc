@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
   const userId = req.session.userId;
 
   try {
-    const [user] = await db.promise().query(
+    const [[user]] = await db.promise().query(
       'SELECT * FROM Utilisateur WHERE IDUtilisateur = ?', 
       [userId]
     );
@@ -54,17 +54,25 @@ router.get('/', async (req, res) => {
       [userId]
     );
 
+    let utilisateurs = [];
+    if (user.IsAdmin) {
+      utilisateurs = await profileController.getUsersForAdmin();
+    }
+
     res.render('profile', {
-      user: user[0],
+      user,
       nbJeux: jeux.length,
       wishlist,
       jeux,
-      playlists
+      playlists,
+      utilisateurs
     });
   } catch (error) {
+    console.error('Erreur dans /profile :', error);
     res.status(500).send('Erreur serveur');
   }
 });
+
 
 // Routes de modification (nom, mot de passe, suppression)
 router.post('/edit-name', profileController.editName);

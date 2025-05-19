@@ -15,14 +15,16 @@ function isAuthenticated(req, res, next) {
 // Middleware pour vérifier si l'utilisateur est administrateur
 async function isAdmin(req, res, next) {
   try {
-    const [user] = await db.promise().query('SELECT IsAdmin FROM Utilisateur WHERE IDUtilisateur = ?', [req.session.userId]);
+    const [user] = await db.promise().query(
+      'SELECT IsAdmin FROM Utilisateur WHERE IDUtilisateur = ?', 
+      [req.session.userId]
+    );
     if (user.length > 0 && user[0].IsAdmin) {
       next();
     } else {
       res.status(403).send('Accès refusé');
     }
   } catch (error) {
-    console.error(error);
     res.status(500).send('Erreur serveur');
   }
 }
@@ -32,16 +34,25 @@ router.use(isAuthenticated);
 
 // Page profil
 router.get('/', async (req, res) => {
-  
-  console.log("👤 Accès /profile avec session :", req.session);
-  
   const userId = req.session.userId;
 
   try {
-    const [user] = await db.promise().query('SELECT * FROM Utilisateur WHERE IDUtilisateur = ?', [userId]);
-    const [jeux] = await db.promise().query('SELECT * FROM JeuxPossedes WHERE IDUtilisateur = ?', [userId]);
-    const [wishlist] = await db.promise().query('SELECT * FROM Wishlist WHERE IDUtilisateur = ?', [userId]);
-    const [playlists] = await db.promise().query('SELECT * FROM Playlist WHERE IDUtilisateur = ?', [userId]);
+    const [user] = await db.promise().query(
+      'SELECT * FROM Utilisateur WHERE IDUtilisateur = ?', 
+      [userId]
+    );
+    const [jeux] = await db.promise().query(
+      'SELECT * FROM JeuxPossedes WHERE IDUtilisateur = ?', 
+      [userId]
+    );
+    const [wishlist] = await db.promise().query(
+      'SELECT * FROM Wishlist WHERE IDUtilisateur = ?', 
+      [userId]
+    );
+    const [playlists] = await db.promise().query(
+      'SELECT * FROM Playlist WHERE IDUtilisateur = ?', 
+      [userId]
+    );
 
     res.render('profile', {
       user: user[0],
@@ -51,7 +62,6 @@ router.get('/', async (req, res) => {
       playlists
     });
   } catch (error) {
-    console.error(error);
     res.status(500).send('Erreur serveur');
   }
 });
@@ -67,7 +77,6 @@ router.get('/admin/users', isAdmin, async (req, res) => {
     const users = await profileController.getUsersForAdmin();
     res.render('admin_users', { users });
   } catch (error) {
-    console.error(error);
     res.status(500).send('Erreur serveur');
   }
 });
@@ -78,7 +87,6 @@ router.post('/admin/make-admin', isAdmin, async (req, res) => {
     await profileController.makeAdmin(userId);
     res.redirect('/profile/admin/users');
   } catch (error) {
-    console.error(error);
     res.status(500).send('Erreur serveur');
   }
 });
@@ -89,7 +97,6 @@ router.post('/admin/remove-admin', isAdmin, async (req, res) => {
     await profileController.removeAdmin(userId);
     res.redirect('/profile/admin/users');
   } catch (error) {
-    console.error(error);
     res.status(500).send('Erreur serveur');
   }
 });

@@ -9,9 +9,11 @@ block content
   p Nombre de jeux possédés : #{nbJeux}
 
   form(action='/profile/edit-name', method='POST')
+    input(type='text', name='newName', placeholder='Nouveau nom d\'utilisateur', required)
     button(type='submit') Changer mon nom d'utilisateur
 
   form(action='/profile/edit-password', method='POST')
+    input(type='password', name='newPassword', placeholder='Nouveau mot de passe', required)
     button(type='submit') Changer mon mot de passe
 
   form(action='/profile/delete', method='POST', onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')")

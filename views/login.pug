@@ -1,18 +1,17 @@
 extends layout
 
 block content
-  h1 Connexion
+  .auth-container
+    h1 Connexion
 
-  form(action="/login" method="POST")
-    div
+    form(action="/login", method="POST")
       label(for="username") Nom d'utilisateur :
-      input(type="text" name="username" id="username" required)
-    div
+      input(type="text", name="username", required)
+
       label(for="password") Mot de passe :
-      input(type="password" name="password" id="password" required)
-    div
+      input(type="password", name="password", required)
+
       button(type="submit") Se connecter
 
-  p
-    | Pas encore de compte ?
-    a(href="/register") Inscrivez-vous ici
+    p Pas encore de compte ?
+      a(href="/register") Inscrivez-vous ici

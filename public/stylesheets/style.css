@@ -1,8 +1,213 @@
+/* ------------------ BASE GLOBALE ------------------ */
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #fff3e4;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 2rem; /* ✅ espace autour de tout */
+  color: #000;
 }
 
+
+/* Liens, titres, conteneurs */
 a {
-  color: #00B7FF;
+  color: #1976D2;
+  text-decoration: none;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 2rem;
+}
+
+.profile-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 2rem; /* ✅ espace intérieur */
+}
+
+/* ------------------ BOUTONS ------------------ */
+button {
+  padding: 0.8rem 1.6rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 30px;
+  border: 3px solid black;
+  box-shadow: 4px 4px 0 #444;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+button:active {
+  transform: translate(2px, 2px);
+}
+
+.red-btn {
+  background-color: #D32F2F;
+  color: white;
+}
+
+.yellow-btn {
+  background-color: #FBC02D;
+  color: black;
+}
+
+.blue-btn {
+  background-color: #1976D2;
+  color: white;
+}
+.default-btn {
+  background-color: #E0E0E0;
+  color: black;
+  border: 3px solid black;
+}
+
+.default-btn:hover {
+  background-color: #ccc;
+}
+
+
+/* ------------------ FORMULAIRES ------------------ */
+form {
+  margin: 1rem 0;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  padding: 0.6rem;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 10px;
+  border: 2px solid black;
+  width: 100%;
+}
+
+/* ------------------ PROFIL ------------------ */
+.user-info-banner {
+  padding: 1.2rem 2rem;
+  margin-bottom: 2rem;
+  border-radius: 40px;
+  box-shadow: 5px 5px 0 #444;
+  border: 3px solid black;
+  background-color: #1976D2;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ------------------ SECTIONS ------------------ */
+.section {
+  margin-top: 2rem;
+}
+
+.section h2 {
+  font-size: 1.5rem;
+  border-bottom: 3px solid black;
+  display: inline-block;
+  color: #D32F2F;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+li {
+  background: white;
+  border: 2px solid #000;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-radius: 10px;
+}
+
+
+.user-info-banner img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 2px solid black;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid black;
+}
+
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* aligner à gauche */
+  gap: 1rem;
+  margin-bottom: 2rem;
+  
+}
+
+
+.profile-actions form {
+  width: 100%;
+}
+
+
+/* PAGES CONNEXION ET REGISTER*/
+.auth-container {
+  max-width: 500px;
+  margin: 5rem auto;
+  background-color: #1976D2;
+  padding: 2rem 3rem;
+  border: 4px solid black;
+  border-radius: 20px;
+  box-shadow: 6px 6px 0 #333;
+  color: white;
+}
+
+.auth-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-container input {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 2px solid black;
+}
+
+.auth-container button {
+  padding: 0.8rem;
+  font-weight: bold;
+  border-radius: 30px;
+  background-color: white;
+  color: black;
+  border: 3px solid black;
+  box-shadow: 4px 4px 0 #333;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.auth-container button:hover {
+  background-color: #f0f0f0;
+}
+
+.auth-container p {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.auth-container a {
+  color: #FBC02D;
+  text-decoration: underline;
 }

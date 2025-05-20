@@ -47,7 +47,7 @@ exports.deleteAccount = (req, res) => {
 
 // Récupérer les utilisateurs (pas besoin de procédure ici)
 exports.getUsersForAdmin = async () => {
-  const [users] = await db.promise().query('SELECT IDUtilisateur, NomUtilisateur, IsAdmin FROM Utilisateur');
+  const [users] = await db.promise().query('SELECT * FROM VueUtilisateursAdmin');
   return users;
 };
 

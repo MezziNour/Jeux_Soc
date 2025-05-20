@@ -37,22 +37,17 @@ router.get('/', async (req, res) => {
   const userId = req.session.userId;
 
   try {
+
     const [[user]] = await db.promise().query(
-      'SELECT * FROM Utilisateur WHERE IDUtilisateur = ?', 
+      'SELECT * FROM VueProfilUtilisateur WHERE IDUtilisateur = ?', 
       [userId]
     );
-    const [jeux] = await db.promise().query(
-      'SELECT * FROM JeuxPossedes WHERE IDUtilisateur = ?', 
-      [userId]
-    );
-    const [wishlist] = await db.promise().query(
-      'SELECT * FROM Wishlist WHERE IDUtilisateur = ?', 
-      [userId]
-    );
-    const [playlists] = await db.promise().query(
-      'SELECT * FROM Playlist WHERE IDUtilisateur = ?', 
-      [userId]
-    );
+    
+
+    const [jeux] = await db.promise().query('SELECT * FROM VueJeuxPossedes WHERE IDUtilisateur = ?', [userId]);
+    const [wishlist] = await db.promise().query('SELECT * FROM VueWishlist WHERE IDUtilisateur = ?', [userId]);
+    const [playlists] = await db.promise().query('SELECT * FROM VuePlaylist WHERE IDUtilisateur = ?', [userId]);
+
 
     let utilisateurs = [];
     if (user.IsAdmin) {
@@ -61,17 +56,20 @@ router.get('/', async (req, res) => {
 
     res.render('profile', {
       user,
-      nbJeux: jeux.length,
+      nbJeux: user.NombreJeux,
       wishlist,
       jeux,
       playlists,
       utilisateurs
     });
+
   } catch (error) {
     console.error('Erreur dans /profile :', error);
     res.status(500).send('Erreur serveur');
   }
 });
+
+
 
 
 // Routes de modification (nom, mot de passe, suppression)

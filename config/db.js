@@ -1,17 +1,17 @@
-const mysql = require('mysql2');
+const mysql = require("mysql2");
 
 const db = mysql.createConnection({
-  host: 'localhost',      
-  user: 'root',       
-  password: 'imanou',
-  database: 'app_jeux_soc'
+  host: "localhost",
+  user: "root",
+  password: "Ammouna1012",
+  database: "app_jeux_soc",
 });
 
 db.connect((err) => {
   if (err) {
-    console.error('Erreur de connexion à la base de données :', err.message);
+    console.error("Erreur de connexion à la base de données :", err.message);
   } else {
-    console.log('Connecté à la base de données MySQL');
+    console.log("Connecté à la base de données MySQL");
   }
 });
 

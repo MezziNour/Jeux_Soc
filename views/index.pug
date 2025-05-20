@@ -5,3 +5,46 @@ block content
   p Welcome to #{title}
   p
     a(href="/login") Se connecter
+
+  .container
+    aside.sidebar
+      .filter-group
+        button.filter-toggle(type="button" data-target="filter-category") Category ▾
+        .filter-options#filter-category
+          if genres.length
+            each genre in genres
+              label
+                input(type="checkbox" name="genres" value=genre.IDGenre)
+                | #{genre.NomGenre}
+          else
+            p Aucun genre trouvé.
+
+      .filter-group
+        button.filter-toggle(type="button" data-target="filter-age") Minimum Age ▾
+        .filter-options#filter-age
+          if ages.length
+            each age in ages
+              label
+                input(type="checkbox" name="ages" value=age.IDAge)
+                | À partir de #{age.AgeMin} ans
+          else
+            p Aucune tranche d'âge trouvée.
+
+      .filter-group
+        button.filter-toggle(type="button" data-target="filter-players") Number of Players ▾
+        .filter-options#filter-players
+          label
+            | Min:
+            input(type="number" name="minPlayers" min="1")
+          label
+            | Max:
+            input(type="number" name="maxPlayers" min="1")
+
+    main.main
+      .search-bar
+        input#search-key(type="text" placeholder="Enter keywords…" autocomplete="off")
+        button#search-btn(type="button") 🔍
+
+      p#no-results Sélectionnez un filtre ou tapez un mot-clé pour afficher les jeux.
+
+      .results-grid#results-grid

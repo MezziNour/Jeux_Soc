@@ -93,7 +93,7 @@ router.post('/admin/make-admin', isAdmin, async (req, res) => {
   const { userId } = req.body;
   try {
     await profileController.makeAdmin(userId);
-    res.redirect('/profile/admin/users');
+    res.redirect('/profile');
   } catch (error) {
     res.status(500).send('Erreur serveur');
   }
@@ -103,7 +103,7 @@ router.post('/admin/remove-admin', isAdmin, async (req, res) => {
   const { userId } = req.body;
   try {
     await profileController.removeAdmin(userId);
-    res.redirect('/profile/admin/users');
+    res.redirect('/profile');
   } catch (error) {
     res.status(500).send('Erreur serveur');
   }

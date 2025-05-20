@@ -81,12 +81,12 @@ block content
                   td #{u.IsAdmin ? 'Oui' : 'Non'}
                   td
                     if !u.IsAdmin
-                      form(action='/profile/make-admin', method='POST', style='display:inline')
-                        input(type='hidden', name='IDUtilisateur', value=u.IDUtilisateur)
+                      form(action='/profile/admin/make-admin', method='POST', style='display:inline')
+                        input(type='hidden', name='userId', value=u.IDUtilisateur)
                         button(type='submit') Rendre admin
                     else
-                      form(action='/profile/remove-admin', method='POST', style='display:inline')
-                        input(type='hidden', name='IDUtilisateur', value=u.IDUtilisateur)
+                      form(action='/profile/admin/remove-admin', method='POST', style='display:inline')
+                        input(type='hidden', name='userId', value=u.IDUtilisateur)
                         button(type='submit') Retirer admin
         else
           p Aucun utilisateur trouvé

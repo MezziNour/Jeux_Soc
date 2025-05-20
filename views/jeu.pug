@@ -1,0 +1,54 @@
+extends layout
+
+block content
+    .game-card
+        img(src=jeu.Image, alt=jeu.NomJeu, width="200")
+
+        h1= jeu.NomJeu
+        p 📅 Date de sortie : #{jeu.DateSortie.toISOString().slice(0, 10)}
+        p 🧑‍🎨 Créateur : #{jeu.Createur}
+        p 🕐 Durée moyenne : #{jeu.DureeMoy.slice(0, 5)} min
+        p 🧒 Âge minimum : #{jeu.AgeMin} ans
+        p 👥 Nombre de joueurs : #{jeu.NbJoueursMin} - #{jeu.NbJoueursMax}
+        p 🏷️ Mots-clés : #{jeu.MotsCles || 'Aucun'}
+        p 🎲 Genres : #{jeu.Genres || 'Aucun'}
+        p 📖 Description : #{jeu.Descriptions}
+        p ⭐ Note moyenne : #{moyenne} / 5
+
+        if userId 
+            form(action="/jeu/playlist/add", method="POST", style="display:inline-block; margin-right: 10px;")
+                    input(type="hidden", name="IDJeu", value=jeu.IDJeu)
+                    button(type="submit", class="btn btn-blue") ➕ Ajouter à ma playlist
+
+            form(action="/jeu/wishlist/add", method="POST", style="display:inline-block;")
+                input(type="hidden", name="IDJeu", value=jeu.IDJeu)
+                button(type="submit", class="btn btn-heart") ❤️ Ajouter à ma wishlist
+                
+            button(onclick="toggleAvisForm()") 📝 Laisser un avis / Voir les avis
+
+            .avis-section#avis-section(style="display: none;")
+                
+                form(action="/jeu/avis/add", method="POST")
+                    input(type="hidden", name="IDJeu", value=jeu.IDJeu)
+                    label(for="note") ⭐ Votre note :
+                    input(type="number", name="note", min="1", max="5", required)
+                    textarea(name="commentaire", placeholder="Votre commentaire", required)
+                    button(type="submit") Envoyer mon avis
+
+                if avis && avis.length
+                    h3 🗣️ Avis des utilisateurs
+                    each a in avis
+                        .avis-item
+                            p.note Note : #{a.Note}/5
+                            p.commentaire #{a.Commentaire}
+                            p.auteur Par #{a.NomUtilisateur}
+                else
+                    p Aucun avis pour le moment.
+        else
+            p Vous devez être connecté pour interagir avec ce jeu.
+
+    script.
+        function toggleAvisForm() {
+            const section = document.getElementById('avis-section');
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }

@@ -76,6 +76,22 @@ router.get('/', async (req, res) => {
 router.post('/edit-name', profileController.editName);
 router.post('/edit-password', profileController.editPassword);
 router.post('/delete', profileController.deleteAccount);
+// Supprimer un jeu de la wishlist
+router.post('/wishlist/delete', async (req, res) => {
+  const { IDJeu } = req.body;
+  const userId = req.session.userId;
+
+  try {
+    await db.promise().query(
+      'DELETE FROM Wishlist WHERE IDUtilisateur = ? AND IDJeu = ?',
+      [userId, IDJeu]
+    );
+    res.redirect('/profile');
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la wishlist :', error);
+    res.status(500).send('Erreur serveur');
+  }
+});
 
 // Routes accessibles uniquement aux admins pour gérer les droits utilisateurs
 router.get('/admin/users', isAdmin, async (req, res) => {
@@ -108,3 +124,4 @@ router.post('/admin/remove-admin', isAdmin, async (req, res) => {
 });
 
 module.exports = router;
+

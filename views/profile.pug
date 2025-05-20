@@ -36,10 +36,17 @@ block content
     .section
       h2 Wishlist
       if wishlist.length
-        ul
-          each item in wishlist
-            li strong #{item.NomJeu}
-              #{item.Image}
+        .wishlist-slider
+          button.left-button ◀
+          .wishlist-track
+            each jeu in wishlist
+              .wishlist-card
+                img(src=jeu.Image, alt=jeu.NomJeu)
+                p= jeu.NomJeu
+                form(action="/profile/wishlist/delete", method="POST")
+                  input(type="hidden", name="IDJeu", value=jeu.IDJeu)
+                  button(type="submit") 🗑️
+          button.right-button ▶
       else
         p Aucune wishlist
 
@@ -91,3 +98,23 @@ block content
                         button(type='submit') Retirer admin
         else
           p Aucun utilisateur trouvé
+  script.
+    document.addEventListener('DOMContentLoaded', () => {
+      const track = document.querySelector('.wishlist-track');
+      const leftBtn = document.querySelector('.left-button');
+      const rightBtn = document.querySelector('.right-button');
+
+      let scrollAmount = 0;
+      const scrollStep = 300;
+
+      leftBtn.addEventListener('click', () => {
+        scrollAmount -= scrollStep;
+        if (scrollAmount < 0) scrollAmount = 0;
+        track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+      });
+
+      rightBtn.addEventListener('click', () => {
+        scrollAmount += scrollStep;
+        track.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+      });
+    });

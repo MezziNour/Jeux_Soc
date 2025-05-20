@@ -156,6 +156,59 @@ li {
 }
 
 
+/* PROFIL : wishlist*/
+.wishlist-slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.wishlist-track {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding: 10px;
+  background-color: #c0392b;
+  border: 3px solid #000;
+  border-radius: 10px;
+}
+
+.wishlist-card {
+  background: #fff;
+  padding: 5px;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 150px;
+  box-shadow: 3px 3px #333;
+}
+
+.wishlist-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.trash-button {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #c0392b;
+}
+
+.left-button,
+.right-button {
+  background-color: #fff;
+  border: 2px solid #333;
+  border-radius: 1.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #555;
+}
+
 /* PAGES CONNEXION ET REGISTER*/
 .auth-container {
   max-width: 500px;
@@ -253,4 +306,105 @@ li {
 .card img {
   width: 100%;
   display: block;
+}
+
+
+/* PAGE JEU*/
+.game-card {
+  background-color: #D32F2F;
+  color: white;
+  padding: 2rem;
+  margin: 3rem auto;
+  max-width: 700px;
+  border-radius: 15px;
+  border: 5px solid black;
+  box-shadow: 8px 8px 0 black;
+}
+
+.game-card h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.game-card p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.game-card button {
+  margin: 0.5rem 0.3rem;
+  padding: 0.7rem 1.2rem;
+  font-weight: bold;
+  border-radius: 20px;
+  background-color: white;
+  color: black;
+  border: 3px solid black;
+  box-shadow: 4px 4px 0 #444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.game-card textarea {
+  width: 100%;
+  border-radius: 10px;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.game-card input[type="number"] {
+  width: 4rem;
+  padding: 0.3rem;
+  border-radius: 10px;
+}
+
+/* Wishlist et playlist dans JEU*/
+.btn {
+  font-family: 'Comic Sans MS', cursive;
+  padding: 10px 15px;
+  margin: 5px 0;
+  border-radius: 16px;
+  border: 3px solid #000;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #000;
+  transition: transform 0.1s ease;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn-blue {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-heart {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+
+
+/* avis*/
+.avis-section {
+  margin-top: 2rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 2px solid #aaa;
+  color: #000000; 
+}
+
+.avis-item {
+  border-bottom: 1px dashed #ccc;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.avis-item .note,
+.avis-item .commentaire,
+.avis-item .auteur {
+  margin: 4px 0;
+  color: #111;
 }

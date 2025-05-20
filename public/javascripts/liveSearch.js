@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const card = document.createElement("div");
           card.className = "card";
           card.innerHTML = `
-            <a href="/game/${g.IDJeu}">
+            <a href="/jeu/${g.IDJeu}">
               <img src="${g.Image}" alt="${g.NomJeu}">
               <div class="title">${g.NomJeu}</div>
             </a>`;

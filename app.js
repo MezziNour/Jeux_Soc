@@ -5,6 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const db = require("./config/db");
 const session = require("express-session");
+const gameRouter = require('./routes/jeu');
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -39,6 +40,7 @@ app.use("/login", loginRouter);
 app.use("/register", registerRouter);
 app.use("/profile", profileRouter);
 app.use("/api", apiRouter);
+app.use('/jeu', gameRouter);
 
 app.post("/logout", (req, res) => {
   req.session.destroy((err) => {

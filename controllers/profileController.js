@@ -60,3 +60,15 @@ exports.makeAdmin = async (userId) => {
 exports.removeAdmin = async (userId) => {
   await db.promise().query('CALL RemoveAdmin(?)', [userId]);
 };
+
+// Récupérer la wishlist
+exports.getWishlist = async (userId) => {
+  const [wishlist] = await db.promise().query(
+    'SELECT * FROM VueWishlist WHERE IDUtilisateur = ?',
+    [userId]
+  );
+  return wishlist;
+};
+
+
+

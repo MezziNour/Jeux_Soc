@@ -40,6 +40,18 @@ block content
             | Max:
             input(type="number" name="maxPlayers" min="1")
 
+  .section
+    h2 Latest
+    if recents && recents.length
+      .results-grid
+        each jeu in recents
+          .card
+            a(href=`/jeu/${jeu.IDJeu}`)
+              img(src=jeu.Image, alt=jeu.NomJeu)
+              .title= jeu.NomJeu
+    else
+      p Aucune nouveauté pour le moment.
+
     main.main
       .search-bar
         input#search-key(type="text" placeholder="Enter keywords…" autocomplete="off")

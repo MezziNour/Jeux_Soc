@@ -12,11 +12,14 @@ router.get("/", async (req, res, next) => {
     const [ages] = await db
       .promise()
       .query("SELECT IDAge, AgeMin FROM CategorieAge ORDER BY AgeMin");
+    //Récupérer top 10 les plus récents
+    const [recents] = await db.promise().query("SELECT * FROM VueTopRecents");
     //Rendre la vue avec ces données
     res.render("index", {
       title: "Home",
       genres,
       ages,
+      recents,
     });
   } catch (err) {
     next(err);

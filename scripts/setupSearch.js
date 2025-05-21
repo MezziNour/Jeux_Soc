@@ -20,7 +20,7 @@ async function ensureIndex(table, indexName, definition) {
 
 async function setupSearch() {
   try {
-    // 1. Création des index
+    // index
     await ensureIndex(
       "Jeu",
       "idx_fulltext_nom",
@@ -43,7 +43,7 @@ async function setupSearch() {
       "INDEX `idx_appartenir_genre` (`IDGenre`)"
     );
 
-    // 2. (Re)création des vues
+    // vues
     console.log("Recréation de la vue ViewJeuxParGenre…");
     await db.promise().query("DROP VIEW IF EXISTS `ViewJeuxParGenre`");
     await db.promise().query(`

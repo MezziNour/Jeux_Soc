@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const apiController = require("../controllers/apiController");
+const apiCtrl = require("../controllers/apiController");
 
-router.get("/games", apiController.searchGames);
+router.get("/games", apiCtrl.searchGames);
 
 module.exports = router;

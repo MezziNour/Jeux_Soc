@@ -3,10 +3,11 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-const db = require("./config/db");
 const session = require("express-session");
-const gameRouter = require('./routes/jeu');
+const flash = require("connect-flash");  
+const db = require("./config/db");
 
+const gameRouter = require('./routes/jeu');
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var loginRouter = require("./routes/login");
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+// Configuration session (nécessaire pour connect-flash)
 app.use(
   session({
     secret: "1234",
@@ -33,6 +35,16 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+// Initialisation connect-flash
+app.use(flash());
+
+// Middleware pour rendre les messages flash accessibles dans toutes les vues
+app.use((req, res, next) => {
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  next();
+});
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);

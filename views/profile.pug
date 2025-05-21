@@ -53,24 +53,41 @@ block content
     .section
       h2 Jeux Possédés
       if jeux.length
-        ul
+        .jeux-slider
+          .jeux-track
           each jeu in jeux
-            strong #{jeu.NomJeu}
-              #{jeu.Image}
+            .jeux-card
+              img(src=jeu.Image, alt=jeu.NomJeu)
+              p= jeu.NomJeu
+              form(action="/profile/jeux/delete", method="POST")
+                input(type="hidden", name="IDJeu", value=jeu.IDJeu)
+                button(type="submit") 🗑️
       else
         p Aucun jeu possédé
 
+
     .section
       h2 Playlists
-      form(action='/profile/add-playlist', method='GET')
-        button(class='default-btn') Ajouter une playlist
       if playlists.length
-        ul
-          each p in playlists
-            li strong #{p.NomJeu}
-              #{p.Image}
+        each playlist in playlists
+          .playlist-block
+            h3= playlist.NomPlaylist
+            if playlist.jeux.length
+              .playlist-jeux
+                each jeu in playlist.jeux
+                  .jeu-card
+                    img(src=jeu.Image, alt=jeu.NomJeu)
+                    p= jeu.NomJeu
+                    form(action="/profile/playlist/delete", method="POST")
+                      input(type="hidden", name="IDJeu", value=jeu.IDJeu)
+                      input(type="hidden", name="IDPlaylist", value=playlist.IDPlaylist)
+                      button(type="submit") 🗑️
+            else
+              p Aucun jeu dans cette playlist
       else
         p Aucune playlist enregistrée
+
+
 
     if user.IsAdmin
       .section

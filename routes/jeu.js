@@ -47,6 +47,70 @@ router.post('/playlist/add', async (req, res) => {
   res.redirect('back');
 });
 
+// Récupérer les playlists d’un utilisateur (API appelée par JS)
+router.get('/playlist/api/playlists', async (req, res) => {
+  const userId = req.session.userId;
+  try {
+    const [results] = await db.promise().query('SELECT IDPlaylist, NomPlaylist FROM PlaylistNom WHERE IDUtilisateur = ?', [userId]);
+    res.json(results);
+  } catch (error) {
+    console.error('Erreur API playlists :', error);
+    res.status(500).send('Erreur serveur');
+  }
+});
+
+// Ajouter à une playlist existante
+router.post('/playlist/add-to-existing', async (req, res) => {
+  const { IDJeu, playlistId } = req.body;
+  const userId = req.session.userId;
+  try {
+    await db.promise().query('CALL AddToExistingPlaylist(?, ?, ?)', [userId, playlistId, IDJeu]);
+    req.flash('success_msg', 'Jeu ajouté à la playlist avec succès.');
+    res.redirect('back');
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      req.flash('error_msg', 'Ce jeu est déjà dans la playlist');
+      res.redirect('back');
+    } else {
+      console.error('Erreur ajout à playlist existante :', err);
+      req.flash('error_msg', 'Erreur serveur lors de l\'ajout à la playlist.');
+      res.redirect('back');
+    }
+  }
+});
+
+
+// Créer une nouvelle playlist + y ajouter le jeu
+router.post('/playlist/create', async (req, res) => {
+  const { IDJeu, NomPlaylist } = req.body;
+  const userId = req.session.userId;
+  try {
+    await db.promise().query('CALL CreatePlaylistWithGame(?, ?, ?)', [userId, NomPlaylist, IDJeu]);
+    res.redirect('back');
+  } catch (err) {
+    console.error('Erreur création de playlist :', err);
+    res.status(500).send('Erreur serveur');
+  }
+});
+
+
+// Ajout à la liste de jeux possédés
+router.post('/possede/add', async (req, res) => {
+  const { IDJeu } = req.body;
+  const userId = req.session.userId;
+
+  if (!userId || !IDJeu) return res.status(400).send('Requête invalide');
+
+  try {
+    await db.promise().query('CALL AddJeuPossede(?, ?)', [userId, IDJeu]);
+    res.redirect('back');
+  } catch (err) {
+    console.error('Erreur lors de l’ajout du jeu possédé :', err);
+    res.status(500).send('Erreur serveur');
+  }
+});
+
+
 // Ajout avis
 router.post('/avis/add', async (req, res) => {
   const { IDJeu, note, commentaire } = req.body;

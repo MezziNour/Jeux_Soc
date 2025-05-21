@@ -1,6 +1,16 @@
 extends layout
 
 block content
+
+    if error_msg
+        .alert.alert-danger
+            | #{error_msg}
+
+    if success_msg
+    .alert.alert-success
+        | #{success_msg}
+
+
     .game-card
         img(src=jeu.Image, alt=jeu.NomJeu, width="200")
 
@@ -16,18 +26,19 @@ block content
         p ⭐ Note moyenne : #{moyenne} / 5
 
         if userId 
-            form(action="/jeu/playlist/add", method="POST", style="display:inline-block; margin-right: 10px;")
-                    input(type="hidden", name="IDJeu", value=jeu.IDJeu)
-                    button(type="submit", class="btn btn-blue") ➕ Ajouter à ma playlist
+            button(type="button", class="btn btn-blue", onclick=`openPlaylistModal(${jeu.IDJeu})`) ➕ Ajouter à une playlist 
 
             form(action="/jeu/wishlist/add", method="POST", style="display:inline-block;")
                 input(type="hidden", name="IDJeu", value=jeu.IDJeu)
                 button(type="submit", class="btn btn-heart") ❤️ Ajouter à ma wishlist
-                
+
+            form(action="/jeu/possede/add", method="POST", style="display:inline-block; margin-left: 10px;")
+                input(type="hidden", name="IDJeu", value=jeu.IDJeu)
+                button(type="submit", class="btn btn-green") ✅ Je possède ce jeu
+
             button(onclick="toggleAvisForm()") 📝 Laisser un avis / Voir les avis
 
             .avis-section#avis-section(style="display: none;")
-                
                 form(action="/jeu/avis/add", method="POST")
                     input(type="hidden", name="IDJeu", value=jeu.IDJeu)
                     label(for="note") ⭐ Votre note :
@@ -47,8 +58,133 @@ block content
         else
             p Vous devez être connecté pour interagir avec ce jeu.
 
-    script.
-        function toggleAvisForm() {
-            const section = document.getElementById('avis-section');
-            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+    //- Modale pour ajout à une playlist
+    #playlist-modal.hidden
+        .modal-content
+            h2 Ajouter à une playlist
+            p Souhaitez-vous ajouter le jeu à une playlist existante ou en créer une nouvelle ?
+            button(type="button", onclick="showExistingPlaylists()") ➕ Playlist existante
+            button(type="button", onclick="showNewPlaylistForm()") 🆕 Nouvelle playlist
+
+            form#existing-playlist-form(action="/jeu/playlist/add-to-existing", method="POST", style="display:none;")
+                input(type="hidden", name="IDJeu", id="playlist-game-id")
+                label(for="playlist-select") Choisissez une playlist :
+                select(name="playlistId", id="playlist-select", required)
+                button(type="submit") Ajouter à cette playlist
+
+            form#new-playlist-form(action="/jeu/playlist/create", method="POST", style="display:none;")
+                input(type="hidden", name="IDJeu", id="new-playlist-game-id")
+                label(for="new-playlist-name") Nom de la nouvelle playlist :
+                input(type="text", name="NomPlaylist", id="new-playlist-name", required)
+                button(type="submit") Créer et ajouter
+
+            button(type="button", onclick="closePlaylistModal()") ❌ Annuler
+
+    style.
+        .hidden {
+            display: none;
         }
+        #playlist-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        #playlist-modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+    script.
+        async function openPlaylistModal(idJeu) {
+            console.log("Ouverture de la modale pour jeu :", idJeu);
+            const modal = document.getElementById('playlist-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('active');
+
+            document.getElementById('playlist-game-id').value = idJeu;
+            document.getElementById('new-playlist-game-id').value = idJeu;
+
+            const response = await fetch('/jeu/playlist/api/playlists');
+            const playlists = await response.json();
+            const select = document.getElementById('playlist-select');
+            select.innerHTML = '';
+
+            // Zone message d'info si pas de playlist
+            let info = document.getElementById('playlist-info');
+            if (!info) {
+                info = document.createElement('p');
+                info.id = 'playlist-info';
+                select.parentNode.insertBefore(info, select.nextSibling);
+            }
+            info.textContent = ''; // reset
+
+            if (playlists.length === 0) {
+                info.textContent = "Aucune playlist disponible. Vous pouvez en créer une nouvelle.";
+                // On désactive le bouton submit et le select
+                select.disabled = true;
+                document.querySelector('#existing-playlist-form button[type="submit"]').disabled = true;
+            } else {
+                // On remplit la liste des playlists
+                playlists.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.IDPlaylist;
+                    option.textContent = p.NomPlaylist;
+                    select.appendChild(option);
+                });
+                select.disabled = false;
+                document.querySelector('#existing-playlist-form button[type="submit"]').disabled = false;
+            }
+
+            // Réinitialiser les formulaires
+            document.getElementById('existing-playlist-form').style.display = 'none';
+            document.getElementById('new-playlist-form').style.display = 'none';
+        }
+
+        function closePlaylistModal() {
+            const modal = document.getElementById('playlist-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('active');
+            document.getElementById('existing-playlist-form').style.display = 'none';
+            document.getElementById('new-playlist-form').style.display = 'none';
+
+            // Nettoyer message et réactiver select & bouton
+            const info = document.getElementById('playlist-info');
+            if (info) info.textContent = '';
+            const select = document.getElementById('playlist-select');
+            if (select) {
+                select.disabled = false;
+            }
+            const btn = document.querySelector('#existing-playlist-form button[type="submit"]');
+            if (btn) btn.disabled = false;
+        }
+
+        function showExistingPlaylists() {
+            const form = document.getElementById('existing-playlist-form');
+            if (form.style.display === 'block') {
+                // Cacher si déjà visible
+                form.style.display = 'none';
+            } else {
+                form.style.display = 'block';
+                document.getElementById('new-playlist-form').style.display = 'none';
+            }
+        }
+
+        function showNewPlaylistForm() {
+            document.getElementById('new-playlist-form').style.display = 'block';
+            document.getElementById('existing-playlist-form').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('playlist-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('active');
+        });

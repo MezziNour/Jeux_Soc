@@ -71,9 +71,38 @@ router.get('/', async (req, res) => {
         NomJeu: row.NomJeu,
         Image: row.Image
       });
+
+      
+    
+
     }
 
     const playlists = Array.from(playlistsMap.values());
+
+
+    // Propositions de troc
+    const [trocs] = await db.promise().query(
+      'SELECT * FROM VueTrocJeux WHERE IDUtilisateurPossesseur = ?', 
+      [userId]
+    );
+
+    for (const troc of trocs) {
+      const [jeuxDemandeur] = await db.promise().query(
+        'SELECT j.IDJeu, j.NomJeu FROM JeuxPossedes jp JOIN Jeu j ON jp.IDJeu = j.IDJeu WHERE jp.IDUtilisateur = ?',
+        [troc.IDUtilisateurDemandeur]
+      );
+      troc.jeuxDemandeur = jeuxDemandeur; // ajouter la liste des jeux du demandeur à chaque proposition
+    }
+    
+
+    // Charger notifications de troc en attente pour l'utilisateur connecté (type 'troc_reponse' et état 'en_attente')
+    const [notificationsTroc] = await db.promise().query(
+      `SELECT * FROM Notification 
+      WHERE IDUtilisateur = ? AND TypeNotif = 'troc_reponse' AND Etat = 'en_attente'`,
+      [userId]
+    );
+    console.log('Notification récupérée :', notificationsTroc);
+
 
     // Liste utilisateurs pour admins
     let utilisateurs = [];
@@ -87,7 +116,9 @@ router.get('/', async (req, res) => {
       wishlist,
       jeux,
       playlists,
-      utilisateurs
+      utilisateurs,
+      trocs,
+      notificationsTroc
     });
 
   } catch (error) {
@@ -152,6 +183,148 @@ router.post('/playlist/delete', async (req, res) => {
     res.status(500).send('Erreur serveur');
   }
 });
+
+router.post('/troc/choisir', async (req, res) => {
+  console.log('REQ.BODY', req.body);
+  console.log('SESSION userId', req.session.userId);
+
+  const { IDJeuSouhaité, IDUtilisateurDemandeur, IDJeuOffert } = req.body;
+  const IDUtilisateurPossesseur = req.session.userId;
+
+  try {
+    // Vérifie que le demandeur possède bien le jeu souhaité
+    const [[verifJeuSouhaite]] = await db.promise().query(
+      'SELECT 1 FROM Wishlist WHERE IDUtilisateur = ? AND IDJeu = ?',
+      [IDUtilisateurDemandeur, IDJeuSouhaité]
+    );
+
+    // Vérifie que le demandeur possède bien le jeu offert
+    const [[verifJeuOffert]] = await db.promise().query(
+      'SELECT 1 FROM JeuxPossedes WHERE IDUtilisateur = ? AND IDJeu = ?',
+      [IDUtilisateurDemandeur, IDJeuOffert]
+    );
+
+    if (!verifJeuSouhaite || !verifJeuOffert) {
+      return res.status(400).send("Troc invalide : l’un des jeux ne correspond pas à son propriétaire.");
+    }
+
+    // Récupère les noms des jeux
+    const [[jeuSouhaite]] = await db.promise().query(
+      'SELECT NomJeu FROM Jeu WHERE IDJeu = ?',
+      [IDJeuSouhaité]
+    );
+
+    const [[jeuOffert]] = await db.promise().query(
+      'SELECT NomJeu FROM Jeu WHERE IDJeu = ?',
+      [IDJeuOffert]
+    );
+
+    const nomJeuSouhaite = jeuSouhaite?.NomJeu || 'un jeu';
+    const nomJeuOffert = jeuOffert?.NomJeu || 'un de vos jeux';
+
+    // Message plus clair pour le demandeur
+    const message = `Proposition d'échange : vous recevez "${nomJeuOffert}" contre votre jeu "${nomJeuSouhaite}".`;
+
+    // Insère la notification pour le demandeur
+    await db.promise().query(
+      `INSERT INTO Notification 
+        (Message, DateNotification, IDUtilisateur, IDJeu, TypeNotif, Etat, IDDemandeur, IDJeuOffert)
+       VALUES (?, CURDATE(), ?, ?, 'troc_reponse', 'en_attente', ?, ?)`,
+      [message, IDUtilisateurDemandeur, IDJeuSouhaité, IDUtilisateurPossesseur, IDJeuOffert]
+    );
+
+    res.redirect('/profile');
+  } catch (error) {
+    console.error('Erreur lors de la proposition de troc :', error);
+    res.status(500).send("Erreur lors de la proposition de troc.");
+  }
+});
+
+
+
+
+router.post('/troc/reponse', async (req, res) => {
+  const { IDNotification, reponse } = req.body;
+  const IDUtilisateurPossesseur = req.session.userId;
+
+  try {
+    const [[notification]] = await db.promise().query(
+      'SELECT * FROM Notification WHERE IDNotification = ? AND IDUtilisateur = ?',
+      [IDNotification, IDUtilisateurPossesseur]
+    );
+
+    if (!notification || notification.TypeNotif !== 'troc_reponse' || notification.Etat !== 'en_attente') {
+      return res.status(400).send('Notification invalide ou déjà traitée.');
+    }
+
+    if (reponse === 'accepté') {
+      const idDemandeur = notification.IDDemandeur;
+      const idAccepteur = IDUtilisateurPossesseur;
+      const jeuDemandeur = notification.IDJeu;
+      const jeuAccepteur = notification.IDJeuOffert;
+
+      if (!idDemandeur || !jeuDemandeur || !jeuAccepteur) {
+        return res.status(400).send('Données manquantes dans la notification.');
+      }
+
+      try {
+        await db.promise().beginTransaction();
+
+        await db.promise().query(
+          'DELETE FROM JeuxPossedes WHERE IDUtilisateur = ? AND IDJeu = ?',
+          [idAccepteur, jeuAccepteur]
+        );
+
+        await db.promise().query(
+          'DELETE FROM JeuxPossedes WHERE IDUtilisateur = ? AND IDJeu = ?',
+          [idDemandeur, jeuDemandeur]
+        );
+
+        await db.promise().query(
+          'INSERT INTO JeuxPossedes (IDUtilisateur, IDJeu) VALUES (?, ?)',
+          [idDemandeur, jeuAccepteur]
+        );
+
+        await db.promise().query(
+          'INSERT INTO JeuxPossedes (IDUtilisateur, IDJeu) VALUES (?, ?)',
+          [idAccepteur, jeuDemandeur]
+        );
+
+        await db.promise().query(
+          'UPDATE Notification SET Etat = "accepté" WHERE IDNotification = ?',
+          [IDNotification]
+        );
+
+        await db.promise().commit();
+
+        await db.promise().query(
+          'INSERT INTO Notification (Message, DateNotification, IDJeu, IDUtilisateur, TypeNotif, Etat, IDDemandeur, IDJeuOffert) VALUES (?, CURDATE(), ?, ?, "autre", "accepté", NULL, NULL)',
+          [`Le troc a été accepté !`, jeuDemandeur, idDemandeur]
+        );
+
+      } catch (error) {
+        await db.promise().rollback();
+        console.error('Erreur pendant transaction troc accepté :', error);
+        return res.status(500).send('Erreur lors du traitement du troc.');
+      }
+
+    } else {
+      await db.promise().query(
+        'UPDATE Notification SET Etat = "refusé" WHERE IDNotification = ?',
+        [IDNotification]
+      );
+    }
+
+    res.redirect('/profile');
+
+  } catch (error) {
+    console.error('Erreur lors de la réponse au troc :', error);
+    res.status(500).send('Erreur serveur');
+  }
+});
+
+
+
 
 // Routes admin pour gérer droits utilisateurs
 router.get('/admin/users', isAdmin, async (req, res) => {

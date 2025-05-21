@@ -87,6 +87,40 @@ block content
       else
         p Aucune playlist enregistrée
 
+    .section
+      h2 Propositions de troc
+      if trocs.length
+        each troc in trocs
+          .troc-proposition
+            p #{troc.NomDemandeur} souhaite "#{troc.TitreJeuSouhaite}", que vous possédez. Vous pouvez choisir parmi ses jeux pour effectuer un échange.
+            form(action="/profile/troc/choisir", method="POST")
+              input(type="hidden", name="IDJeuSouhaité", value=troc.IDJeuSouhaite)
+              input(type="hidden", name="IDUtilisateurDemandeur", value=troc.IDUtilisateurDemandeur)
+              label(for="jeuOffert") Choisissez un de ses jeux :
+              select(name="IDJeuOffert", required)
+                each jeu in troc.jeuxDemandeur
+                  option(value=jeu.IDJeu)= jeu.NomJeu
+              button(type="submit") Proposer l'échange
+      else
+        p Aucune proposition de troc pour le moment.
+
+    .section
+      h2 Notifications de troc à confirmer
+      if notificationsTroc.length
+        each notif in notificationsTroc
+          .notif-troc
+            p #{notif.Message}
+            form(action="/profile/troc/reponse", method="POST", style="display:inline")
+              input(type="hidden", name="IDNotification", value=notif.IDNotification)
+              input(type="hidden", name="reponse", value="accepté")
+              button.green-btn(type="submit") Accepter
+            form(action="/profile/troc/reponse", method="POST", style="display:inline; margin-left:10px;")
+              input(type="hidden", name="IDNotification", value=notif.IDNotification)
+              input(type="hidden", name="reponse", value="refusé")
+              button.red-btn(type="submit") Refuser
+      else
+        p Aucune notification de troc en attente.
+
 
 
     if user.IsAdmin

@@ -1,15 +1,25 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  p
-    a(href="/login") Se connecter
+  .section
+    h2 Latest
+    if recents && recents.length
+      .defilement-slider
+        button.left-button(type="button") ◀
+        .defilement-track
+          each jeu in recents
+            .defilement-card
+              a(href=`/jeu/${jeu.IDJeu}`)
+                img(src=jeu.Image, alt=jeu.NomJeu)
+                p= jeu.NomJeu
+        button.right-button(type="button") ▶
+    else
+      p Aucune nouveauté pour le moment.
 
   .container
     aside.sidebar
       .filter-group
-        button.filter-toggle(type="button" data-target="filter-category") Category ▾
+        button.red-btn.filter-toggle(type="button" data-target="filter-category") Category ▾
         .filter-options#filter-category
           if genres.length
             each genre in genres
@@ -20,7 +30,7 @@ block content
             p Aucun genre trouvé.
 
       .filter-group
-        button.filter-toggle(type="button" data-target="filter-age") Minimum Age ▾
+        button.yellow-btn.filter-toggle(type="button" data-target="filter-age") Minimum Age ▾
         .filter-options#filter-age
           if ages.length
             each age in ages
@@ -31,7 +41,7 @@ block content
             p Aucune tranche d'âge trouvée.
 
       .filter-group
-        button.filter-toggle(type="button" data-target="filter-players") Number of Players ▾
+        button.blue-btn.filter-toggle(type="button" data-target="filter-players") Number of Players ▾
         .filter-options#filter-players
           label
             | Min:
@@ -40,22 +50,12 @@ block content
             | Max:
             input(type="number" name="maxPlayers" min="1")
 
-  .section
-    h2 Latest
-    if recents && recents.length
-      .results-grid
-        each jeu in recents
-          .card
-            a(href=`/jeu/${jeu.IDJeu}`)
-              img(src=jeu.Image, alt=jeu.NomJeu)
-              .title= jeu.NomJeu
-    else
-      p Aucune nouveauté pour le moment.
+
+
 
     main.main
       .search-bar
         input#search-key(type="text" placeholder="Enter keywords…" autocomplete="off")
-        button#search-btn(type="button") 🔍
 
       p#no-results Sélectionnez un filtre ou tapez un mot-clé pour afficher les jeux.
 

@@ -11,8 +11,16 @@ router.get('/:id', async (req, res) => {
     const [jeuRes] = await db.promise().query('CALL GetJeuDetails(?)', [idJeu]);
     const jeu = jeuRes[0][0];
 
-    const [noteRes] = await db.promise().query('SELECT ROUND(AVG(Note),1) AS moyenne FROM Avis WHERE IDJeu = ?', [idJeu]);
-    const moyenne = noteRes[0].moyenne || 'Pas encore noté';
+    const [noteRes] = await db.promise().query('SELECT * FROM VueMoyenneJeux WHERE IDJeu = ?', [idJeu]); //on utilise une vue
+    let moyenne = 'Pas encore noté';
+    let nbAvis = 0;
+    if (noteRes.length > 0) {
+      if (noteRes[0].Moyenne !== null) {
+        moyenne = noteRes[0].Moyenne;
+        nbAvis = noteRes[0].NombreAvis;
+      }
+    }
+
     const [avisRes] = await db.promise().query(`
         SELECT a.Note, a.Commentaire, u.NomUtilisateur
         FROM Avis a
@@ -20,8 +28,13 @@ router.get('/:id', async (req, res) => {
         WHERE a.IDJeu = ?
         ORDER BY a.IDAvis DESC
     `, [idJeu]);
+    console.log("noteRes:", noteRes[0]);
     
-    res.render('jeu', { jeu, moyenne, userId, avis: avisRes || [] });
+    // Pour savoir combien de personnes ont un certain jeu en wishlist
+    const [[wishlistCountRes]] = await db.promise().query('SELECT NbWishlistPourJeu(?) AS total',[idJeu]);
+    const nbWishlists = wishlistCountRes?.total || 0;
+
+    res.render('jeu', { jeu, moyenne, nbAvis, userId, nbWishlists,showLogout: false, avis: avisRes || [] });
   } catch (err) {
     console.error(err);
     res.status(500).send('Erreur lors du chargement du jeu');

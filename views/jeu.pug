@@ -23,7 +23,8 @@ block content
         p 🏷️ Mots-clés : #{jeu.MotsCles || 'Aucun'}
         p 🎲 Genres : #{jeu.Genres || 'Aucun'}
         p 📖 Description : #{jeu.Descriptions}
-        p ⭐ Note moyenne : #{moyenne} / 5
+        p ❤️ Ce jeu est dans #{nbWishlists} wishlist(s)
+        p ⭐ Note moyenne : #{moyenne || 'Pas encore noté'} / 5 (#{nbAvis} avis)
 
         if userId 
             button(type="button", class="btn btn-blue", onclick=`openPlaylistModal(${jeu.IDJeu})`) ➕ Ajouter à une playlist 
@@ -104,6 +105,13 @@ block content
         }
 
     script.
+        function toggleAvisForm() {
+            const section = document.getElementById('avis-section');
+            if (section) {
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+
         async function openPlaylistModal(idJeu) {
             console.log("Ouverture de la modale pour jeu :", idJeu);
             const modal = document.getElementById('playlist-modal');

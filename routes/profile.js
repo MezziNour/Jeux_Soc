@@ -38,10 +38,15 @@ router.get('/', async (req, res) => {
 
   try {
     // Infos utilisateur
-    const [[user]] = await db.promise().query(
-      'SELECT * FROM VueProfilUtilisateur WHERE IDUtilisateur = ?', 
-      [userId]
-    );
+    const [[user]] = await db.promise().query('SELECT * FROM VueProfilUtilisateur WHERE IDUtilisateur = ?', [userId]);
+
+    // Attribution d'un titre à l'utilisateur
+    const [[titreRes]] = await db.promise().query(  'SELECT TitreUtilisateur(?) AS titre',[userId]);
+    const titre = titreRes?.titre || null;
+
+    // Jeu préféré de l'utilisateur
+    const [[jeuPrefereRes]] = await db.promise().query('SELECT NomJeu FROM Jeu WHERE IDJeu = JeuPrefere(?)',[userId]);
+    const jeuPrefere = jeuPrefereRes?.NomJeu || null;
 
     // Jeux possédés et wishlist
     const [jeux] = await db.promise().query('SELECT * FROM VueJeuxPossedes WHERE IDUtilisateur = ?', [userId]);
@@ -116,9 +121,14 @@ router.get('/', async (req, res) => {
       wishlist,
       jeux,
       playlists,
+      playlistsGroupees: playlists,
       utilisateurs,
       trocs,
-      notificationsTroc
+      notificationsTroc,
+      jeuPrefere,
+      titre,
+      userId: req.session.userId,
+      showLogout: false
     });
 
   } catch (error) {

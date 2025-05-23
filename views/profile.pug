@@ -4,6 +4,10 @@ block content
   .profile-container
     .user-info-banner
       img(src='/images/default.jpg', alt='Photo de profil', class='profile-avatar')
+      if titre
+        p 🎭 Titre : #{titre}
+      if jeuPrefere
+        p 🎖 Jeu préféré : #{jeuPrefere}
       span Nom d'utilisateur : #{user.NomUtilisateur} | Nombre de jeux possédés : #{user.NombreJeux}
 
     script.
@@ -32,15 +36,17 @@ block content
 
       form(action='/profile/delete', method='POST', onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')")
         button.blue-btn(type='submit') Supprimer mon compte
+    
+    
 
     .section
       h2 Wishlist
       if wishlist.length
-        .wishlist-slider
+        .defilement-slider
           button.left-button ◀
-          .wishlist-track
+          .defilement-track
             each jeu in wishlist
-              .wishlist-card
+              .defilement-card
                 img(src=jeu.Image, alt=jeu.NomJeu)
                 p= jeu.NomJeu
                 form(action="/profile/wishlist/delete", method="POST")
@@ -53,42 +59,45 @@ block content
     .section
       h2 Jeux Possédés
       if jeux.length
-        .jeux-slider
-          .jeux-track
-          each jeu in jeux
-            .jeux-card
-              img(src=jeu.Image, alt=jeu.NomJeu)
-              p= jeu.NomJeu
-              form(action="/profile/jeux/delete", method="POST")
-                input(type="hidden", name="IDJeu", value=jeu.IDJeu)
-                button(type="submit") 🗑️
+        .defilement-slider
+          button.left-button ◀
+          .defilement-track
+            each jeu in jeux
+              .defilement-card
+                img(src=jeu.Image, alt=jeu.NomJeu)
+                p= jeu.NomJeu
+                form(action="/profile/possede/delete", method="POST")
+                  input(type="hidden", name="IDJeu", value=jeu.IDJeu)
+                  button(type="submit") 🗑️
+          button.right-button ▶
       else
         p Aucun jeu possédé
 
 
+
     .section
       h2 Playlists
-      if playlists.length
-        each playlist in playlists
-          .playlist-block
-            h3= playlist.NomPlaylist
-            if playlist.jeux.length
-              .playlist-jeux
-                each jeu in playlist.jeux
-                  .jeu-card
-                    img(src=jeu.Image, alt=jeu.NomJeu)
-                    p= jeu.NomJeu
-                    form(action="/profile/playlist/delete", method="POST")
-                      input(type="hidden", name="IDJeu", value=jeu.IDJeu)
-                      input(type="hidden", name="IDPlaylist", value=playlist.IDPlaylist)
-                      button(type="submit") 🗑️
-            else
-              p Aucun jeu dans cette playlist
+      if playlistsGroupees.length
+        each playlist in playlistsGroupees
+          h3= playlist.NomPlaylist
+          .defilement-slider
+            button.left-button(type="button") ◀
+            .defilement-track
+              each jeu in playlist.jeux
+                .defilement-card
+                  img(src=jeu.Image, alt=jeu.NomJeu)
+                  p= jeu.NomJeu
+                  form(action="/profile/playlist/delete", method="POST")
+                    input(type="hidden", name="IDJeu", value=jeu.IDJeu)
+                    input(type="hidden", name="IDPlaylist", value=playlist.IDPlaylist)
+                    button(type="submit") 🗑️
+            button.right-button(type="button") ▶
       else
         p Aucune playlist enregistrée
 
+
     .section
-      h2 Propositions de troc
+      h2 Proposition(s) de troc
       if trocs.length
         each troc in trocs
           .troc-proposition
@@ -105,7 +114,7 @@ block content
         p Aucune proposition de troc pour le moment.
 
     .section
-      h2 Notifications de troc à confirmer
+      h2 Notification(s) de troc à confirmer
       if notificationsTroc.length
         each notif in notificationsTroc
           .notif-troc

@@ -3,24 +3,41 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
-    meta(charset="utf-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1")
   body
-    header.navbar
+    nav.navbar
       .nav-container
-        a.logo(href="/") 🎲 Jeux 
-        nav.nav-links
-          a(href="/") Accueil
+        a.logo(href='/') 🎲 Jeu
+        ul.nav-links
           if !userId
-            a(href="/login") Connexion
-            a(href="/register") Inscription
+            li: a(href='/login') Connexion
+            li: a(href='/register') Inscription
           else
-            a(href="/profile") Mon profil
-            form(action="/logout", method="POST", style="display:inline")
-              button(type="submit") Déconnexion
+            li: a(href='/profile') Mon profil
+            if showLogout
+              li
+                form(method="POST", action="/logout")
+                  button.logout-btn(type="submit") Déconnexion
 
-    main
-      block content
+    block content
 
     script(src='/javascripts/filterToggle.js')
     script(src='/javascripts/liveSearch.js')
+
+    // Pour les boutons de défilement 
+    script. 
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".defilement-slider").forEach(slider => {
+          const track = slider.querySelector(".defilement-track");
+          const left = slider.querySelector(".left-button");
+          const right = slider.querySelector(".right-button");
+          
+          if (left && right && track) {
+            left.addEventListener("click", () => {
+              track.scrollBy({ left: -300, behavior: "smooth" });
+            });
+            right.addEventListener("click", () => {
+              track.scrollBy({ left: 300, behavior: "smooth" });
+            });
+          }
+        });
+      });

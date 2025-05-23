@@ -16,10 +16,12 @@ router.get("/", async (req, res, next) => {
     const [recents] = await db.promise().query("SELECT * FROM VueTopRecents");
     //Rendre la vue avec ces données
     res.render("index", {
-      title: "Home",
+      title: "Jeu",
       genres,
       ages,
       recents,
+      userId: req.session.userId,
+      showLogout: false
     });
   } catch (err) {
     next(err);

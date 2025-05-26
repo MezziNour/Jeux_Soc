@@ -1,6 +1,6 @@
 # JeuSoc - Application de gestion et d’échange de jeux de société
 
-JeuSoc est une plateforme web (Node.js + Express + MySQL) qui permet aux utilisateurs de :
+JeuSoc est un site web (Node.js + MySQL) qui permet aux utilisateurs de :
 - Consulter un catalogue de jeux de société
 - Rechercher et filtrer par mots-clés, genres, âge et nombre de joueurs
 - Ajouter des jeux à leur wishlist et à leur collection (jeux possédés)
@@ -27,11 +27,10 @@ npm install
 3.Configurer la base de données
 - Ouvrez config/db.js et ajouter lemot de passe de votre base de données.
 - Créez la base de données et les tables en important le script SQL :
--> Via le terminal :
-mysql -u root -p app_jeux_soc < Jeux_Soc/db/app_jeux_soc.sql
--> Ou via un outil MySQL :
-1. Ouvrir le fichier db/app_jeux_soc.sql
-2. Exécuter
+-   Via le terminal : mysql -u root -p app_jeux_soc < Jeux_Soc/db/app_jeux_soc.sql
+-   Ou via un outil MySQL :
+-     1. Ouvrir le fichier db/app_jeux_soc.sql
+-     2. Exécuter
 
 # Lancement de l’application
 npm start

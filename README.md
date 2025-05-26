@@ -19,21 +19,22 @@ JeuSoc est un site web (Node.js + MySQL) qui permet aux utilisateurs de :
 # Installation
 
 1. Cloner le dépôt :
-git clone https://github.com/MezziNour/Jeux_Soc.git
+-     git clone https://github.com/MezziNour/Jeux_Soc.git
 
-2. Installer les dépendances :
-npm install
+3. Installer les dépendances :
+-     npm install
 
 3.Configurer la base de données
 - Ouvrez config/db.js et ajouter lemot de passe de votre base de données.
 - Créez la base de données et les tables en important le script SQL :
--   Via le terminal : mysql -u root -p app_jeux_soc < Jeux_Soc/db/app_jeux_soc.sql
+-   Via le terminal :
+-     mysql -u root -p app_jeux_soc < Jeux_Soc/db/app_jeux_soc.sql
 -   Ou via un outil MySQL :
 -     1. Ouvrir le fichier db/app_jeux_soc.sql
 -     2. Exécuter
 
 # Lancement de l’application
-npm start
+-     npm start
 L’application écoute par défaut sur le port 3000. Ouvrez votre navigateur à : http://localhost:3000
 
 # Fonctionnalités clés

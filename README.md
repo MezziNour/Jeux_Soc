@@ -38,7 +38,9 @@ JeuSoc est un site web (Node.js + MySQL) qui permet aux utilisateurs de :
 L’application écoute par défaut sur le port 3000. Ouvrez votre navigateur à : http://localhost:3000
 
 # Fonctionnalités clés
-- Recherche dynamique via /api/games et procédure stockée SearchGames
-- Gestion complète du profil avec procédures stockées (update, delete, admin)
-- Playlists personnalisées (création, ajout, suppression)
-- Système de troc avec notifications et transactions sécurisées
+- Recherche de jeux par catégorie / barre de recherche : mise en place d’indexes pour accélérer la recherche et de vues pré‑filtrées par catégorie ou tranche d’âge pour simplifier les requêtes.
+- Wishlist : transactions sécurisées pour assurer l’ajout et la suppression de jeux dans la wishlist.
+- Top 10 des nouveautés : vue dédiée pour afficher les jeux les plus récents.
+- Troc entre utilisateurs (panier) : transactions et procédures stockées pour gérer les échanges.
+- Notifications de troc : triggers pour informer lorsqu’un jeu de sa wishlist est disponible au troc.
+- Avis, commentaires et notations : jointures et fonctions pour calculer la moyenne des notes.

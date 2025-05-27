@@ -25,7 +25,7 @@ JeuSoc est un site web (Node.js + MySQL) qui permet aux utilisateurs de :
 -     npm install
 
 3.Configurer la base de données
-- Ouvrez config/db.js et ajouter lemot de passe de votre base de données.
+- Ouvrez config/db.js et ajouter le mot de passe de votre base de données.
 - Créez la base de données et les tables en important le script SQL :
 -   Via le terminal :
 -     mysql -u root -p app_jeux_soc < Jeux_Soc/db/app_jeux_soc.sql

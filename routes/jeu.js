@@ -39,9 +39,6 @@ router.get('/:id', async (req, res) => {
     console.error(err);
     res.status(500).send('Erreur lors du chargement du jeu');
   }
-
-  
-
 });
 
 // Ajout wishlist
